@@ -105,6 +105,9 @@ nav.main-nav a:hover::after{width:100%;}
   nav.main-nav, .header-cta .btn{display:none;}
   .menu-toggle{display:block;}
   .hero{padding:130px 0 60px;}
+  .story{padding:70px 0;}
+  .story-grid{grid-template-columns:1fr;gap:32px;}
+  .story-visual{height:200px;order:-1;}
 }
 
 .hero{
@@ -135,3 +138,45 @@ nav.main-nav a:hover::after{width:100%;}
 .ornament-divider{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:34px;}
 .ornament-divider .stem{width:48px;height:1px;background:var(--line);}
 .ornament-divider .diamond{width:12px;height:12px;border:1.4px solid var(--gold);transform:rotate(45deg);}
+
+.story{
+  background:var(--white);
+  padding:100px 0;
+  border-top:1px solid var(--line);
+}
+.story-grid{
+  display:grid;
+  grid-template-columns:1.1fr 0.9fr;
+  gap:60px;
+  align-items:center;
+}
+.story .eyebrow{
+  font-size:11.5px;letter-spacing:0.18em;text-transform:uppercase;font-weight:600;color:var(--gold);
+  margin-bottom:14px;
+}
+.story h2{
+  font-family:var(--font-display);font-weight:600;
+  font-size:clamp(26px, 3.4vw, 36px);
+  color:var(--wine);
+  line-height:1.15;
+  margin-bottom:20px;
+}
+.story-lead{
+  font-family:var(--font-display);font-style:italic;font-weight:400;
+  font-size:16px;color:var(--ink);
+  margin-bottom:12px;
+  line-height:1.5;
+}
+.story-body{
+  font-size:14px;color:#6b6259;line-height:1.75;
+  max-width:420px;
+}
+.story-visual{
+  background:var(--cream);
+  border:1px solid var(--line);
+  border-radius:4px;
+  height:280px;
+  display:flex;align-items:center;justify-content:center;
+  padding:40px;
+}
+.story-visual svg{width:100px;height:100px;opacity:0.85;}
