@@ -494,5 +494,5 @@ nav.main-nav a:hover::after{width:100%;}
   .order-badge{padding:14px 20px;}
   .site-footer{padding:44px 0 28px;}
   .footer-nav{gap:14px 18px;}
-  .marquee-track{animation:none;}
+  .marquee-track{animation: marquee-scroll 35s linear infinite;}
 }
