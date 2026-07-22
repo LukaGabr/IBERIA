@@ -98,9 +98,11 @@ nav.main-nav a:hover::after{width:100%;}
 .header-cta{display:flex;align-items:center;gap:22px;}
 .header-cta .btn{padding:11px 22px;font-size:12px;}
 
-.menu-toggle{display:none;background:none;border:0;cursor:pointer;padding:6px;}
-.menu-toggle span{display:block;width:24px;height:2px;background:var(--wine);margin:5px 0;transition:.3s;}
-
+.menu-toggle{display:none;background:none;border:0;cursor:pointer;padding:6px;position:relative;z-index:200;}
+.menu-toggle span{display:block;width:24px;height:2px;background:var(--wine);margin:5px 0;transition:transform .3s ease, opacity .3s ease;}
+.menu-toggle.active span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.menu-toggle.active span:nth-child(2){opacity:0;}
+.menu-toggle.active span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
 .hero{
   background:var(--cream);
   padding:150px 0 90px;
