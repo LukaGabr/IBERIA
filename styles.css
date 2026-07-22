@@ -169,10 +169,13 @@ nav.main-nav a:hover::after{width:100%;}
   border:1px solid var(--line);
   border-radius:4px;
   height:280px;
-  display:flex;align-items:center;justify-content:center;
-  padding:40px;
+  overflow:hidden;
 }
-.story-visual svg{width:100px;height:100px;opacity:0.85;}
+.story-visual img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
 
 .menu{
   background:var(--cream);
