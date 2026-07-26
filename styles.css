@@ -477,6 +477,33 @@ nav.main-nav a:hover::after{width:100%;}
   to{transform:translateX(-50%);}
 }
 
+.footer-social{
+  display:flex;
+  gap:16px;
+  justify-content:center;
+  margin-top:24px;
+  margin-bottom:24px;
+}
+.footer-social a{
+  color:var(--gold-light);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:34px;
+  height:34px;
+  border:1px solid rgba(251,247,239,0.2);
+  border-radius:50%;
+  transition:color .25s ease, border-color .25s ease, transform .25s ease;
+}
+.footer-social a:hover{
+  color:var(--cream);
+  border-color:var(--gold-light);
+  transform:translateY(-2px);
+}
+.footer-social svg{
+  width:16px;
+  height:16px;
+}
 @media (max-width:760px){
   nav.main-nav, .header-cta .btn{display:none;}
   .menu-toggle{display:block;}
