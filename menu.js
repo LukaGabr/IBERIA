@@ -1,24 +1,41 @@
-// Load menu data from JSON and render it
-fetch("menu.json")
-  .then(response => response.json())
-  .then(data => {
-    renderMenu(data.menu);
-  })
-  .catch(error => {
+// menu.js
+// Loads menu data from Firestore and renders the accordion
+
+import { db } from "./firebase-config.js";
+import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+async function loadMenu() {
+  try {
+    const menuRef = collection(db, "menu");
+    const q = query(menuRef, orderBy("order"));
+    const snapshot = await getDocs(q);
+
+    const categories = [];
+    snapshot.forEach((doc) => {
+      categories.push(doc.data());
+    });
+
+    renderMenu(categories);
+  } catch (error) {
     console.error("Error loading menu:", error);
-  });
+  }
+}
 
 function renderMenu(categories) {
   const accordion = document.getElementById("menu-accordion");
   accordion.innerHTML = ""; // clear any static content
 
   categories.forEach((category, index) => {
-    const dishesHTML = category.items.map(item => `
+    const dishesHTML = category.items
+      .map(
+        (item) => `
       <div class="dish">
         <h4>${item.name}</h4>
         <p>${item.description}</p>
       </div>
-    `).join("");
+    `
+      )
+      .join("");
 
     const isFirst = index === 0; // keep first category open by default
 
@@ -46,22 +63,24 @@ function renderMenu(categories) {
 
 // Accordion menu — one category open at a time
 function attachAccordionListeners() {
-  const accItems = document.querySelectorAll('#menu-accordion .acc-item');
+  const accItems = document.querySelectorAll("#menu-accordion .acc-item");
 
-  accItems.forEach(item => {
-    const header = item.querySelector('.acc-header');
-    header.addEventListener('click', () => {
-      const isActive = item.classList.contains('active');
+  accItems.forEach((item) => {
+    const header = item.querySelector(".acc-header");
+    header.addEventListener("click", () => {
+      const isActive = item.classList.contains("active");
 
-      accItems.forEach(other => {
-        other.classList.remove('active');
-        other.querySelector('.acc-header').setAttribute('aria-expanded', 'false');
+      accItems.forEach((other) => {
+        other.classList.remove("active");
+        other.querySelector(".acc-header").setAttribute("aria-expanded", "false");
       });
 
       if (!isActive) {
-        item.classList.add('active');
-        header.setAttribute('aria-expanded', 'true');
+        item.classList.add("active");
+        header.setAttribute("aria-expanded", "true");
       }
     });
   });
 }
+
+loadMenu();
