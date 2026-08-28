@@ -232,6 +232,7 @@ nav.main-nav a:hover::after{width:100%;}
   font-weight:600;
   color:var(--wine);
   text-align:left;
+  scroll-margin-top:90px; /* clears the fixed header when scrolled into view */
 }
 .acc-item.active .acc-header{
   background:var(--cream);

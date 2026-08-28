@@ -64,21 +64,44 @@ function renderMenu(categories) {
 // Accordion menu — one category open at a time
 function attachAccordionListeners() {
   const accItems = document.querySelectorAll("#menu-accordion .acc-item");
+  const allPanels = document.querySelectorAll("#menu-accordion .acc-panel");
 
   accItems.forEach((item) => {
     const header = item.querySelector(".acc-header");
     header.addEventListener("click", () => {
-      const isActive = item.classList.contains("active");
+      const willOpen = !item.classList.contains("active");
+      const wasActive = Array.from(accItems).find((i) => i.classList.contains("active"));
 
-      accItems.forEach((other) => {
-        other.classList.remove("active");
-        other.querySelector(".acc-header").setAttribute("aria-expanded", "false");
+      // --- Step 1: figure out where the header will end up, with no
+      // animation and no visible change, by momentarily applying the final
+      // state, measuring it, then instantly reverting. ---
+      allPanels.forEach((p) => (p.style.transition = "none"));
+
+      accItems.forEach((i) => i.classList.remove("active"));
+      if (willOpen) item.classList.add("active");
+      void document.body.offsetHeight; // force layout to read final positions
+
+      const targetTop = header.getBoundingClientRect().top + window.pageYOffset - 90;
+
+      accItems.forEach((i) => i.classList.remove("active"));
+      if (wasActive) wasActive.classList.add("active");
+      void document.body.offsetHeight; // force layout back to the starting state
+
+      allPanels.forEach((p) => (p.style.transition = ""));
+
+      // --- Step 2: apply the real change and scroll to the pre-calculated
+      // target in one smooth motion, at the same time the panels animate. ---
+      requestAnimationFrame(() => {
+        accItems.forEach((other) => {
+          other.classList.remove("active");
+          other.querySelector(".acc-header").setAttribute("aria-expanded", "false");
+        });
+        if (willOpen) {
+          item.classList.add("active");
+          header.setAttribute("aria-expanded", "true");
+        }
+        window.scrollTo({ top: targetTop, behavior: "smooth" });
       });
-
-      if (!isActive) {
-        item.classList.add("active");
-        header.setAttribute("aria-expanded", "true");
-      }
     });
   });
 }
