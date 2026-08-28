@@ -4,6 +4,12 @@
 import { db } from "./firebase-config.js";
 import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str || "";
+  return div.innerHTML;
+}
+
 async function loadMenu() {
   try {
     const menuRef = collection(db, "menu");
@@ -30,8 +36,8 @@ function renderMenu(categories) {
       .map(
         (item) => `
       <div class="dish">
-        <h4>${item.name}</h4>
-        <p>${item.description}</p>
+        <h4>${escapeHtml(item.name)}</h4>
+        <p>${escapeHtml(item.description)}</p>
       </div>
     `
       )
@@ -43,7 +49,7 @@ function renderMenu(categories) {
     accItem.className = `acc-item${isFirst ? " active" : ""}`;
     accItem.innerHTML = `
       <button class="acc-header" aria-expanded="${isFirst}">
-        <span>${category.category}</span>
+        <span>${escapeHtml(category.category)}</span>
         <span class="acc-icon"></span>
       </button>
       <div class="acc-panel">
