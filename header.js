@@ -37,3 +37,9 @@ nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
     cancelAnimationFrame(syncFrame);
   }
 }));
+
+// Footer copyright year — fills in automatically, updates itself every year
+const footerYear = document.getElementById('footer-year');
+if (footerYear) {
+  footerYear.textContent = new Date().getFullYear();
+}

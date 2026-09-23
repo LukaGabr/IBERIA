@@ -90,7 +90,7 @@ function renderCategory(docId, data) {
 
   catEl.innerHTML = `
     <div class="category-header">
-      <input type="text" class="category-name-input" value="${escapeHtml(data.category)}">
+      <input type="text" class="category-name-input">
       <button class="btn-danger delete-category-btn">Delete Category</button>
     </div>
     <div class="dish-list"></div>
@@ -98,6 +98,11 @@ function renderCategory(docId, data) {
     <button class="btn-primary save-category-btn">Save Changes</button>
     <span class="save-confirm"></span>
   `;
+
+  // Set as a DOM property, not an HTML attribute string — this sidesteps
+  // HTML parsing entirely, so quote marks in the name (e.g. 12" Pizza) can't
+  // break out of the attribute or inject markup.
+  catEl.querySelector(".category-name-input").value = data.category;
 
   const dishList = catEl.querySelector(".dish-list");
   data.items.forEach((item) => {
@@ -128,20 +133,18 @@ function renderDishRow(item) {
   const row = document.createElement("div");
   row.className = "dish-row";
   row.innerHTML = `
-    <input type="text" class="dish-name-input" placeholder="Dish name" value="${escapeHtml(item.name)}">
-    <textarea class="dish-desc-input" placeholder="Description">${escapeHtml(item.description)}</textarea>
+    <input type="text" class="dish-name-input" placeholder="Dish name">
+    <textarea class="dish-desc-input" placeholder="Description"></textarea>
     <button class="btn-danger remove-dish-btn">Remove</button>
   `;
+  // Same fix as the category name above — set via DOM property, not
+  // interpolated into the HTML string, so quote marks can't break out.
+  row.querySelector(".dish-name-input").value = item.name;
+  row.querySelector(".dish-desc-input").value = item.description;
   row.querySelector(".remove-dish-btn").addEventListener("click", () => {
     row.remove();
   });
   return row;
-}
-
-function escapeHtml(str) {
-  const div = document.createElement("div");
-  div.textContent = str || "";
-  return div.innerHTML;
 }
 
 // ---------- SAVE / DELETE ----------
