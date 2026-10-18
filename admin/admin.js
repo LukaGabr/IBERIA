@@ -60,27 +60,27 @@ logoutBtn.addEventListener("click", () => {
 
 // ---------- LOAD & RENDER MENU ----------
 
-function slugify(text) {
-  return text
-    .toLowerCase()
-    .replace(/&/g, "and")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
-
 async function loadCategories() {
   categoriesContainer.innerHTML = "<p>Loading menu...</p>";
+  statusMsg.classList.remove("status-error");
 
-  const menuRef = collection(db, "menu");
-  const q = query(menuRef, orderBy("order"));
-  const snapshot = await getDocs(q);
+  try {
+    const menuRef = collection(db, "menu");
+    const q = query(menuRef, orderBy("order"));
+    const snapshot = await getDocs(q);
 
-  categoriesContainer.innerHTML = "";
+    categoriesContainer.innerHTML = "";
 
-  snapshot.forEach((docSnap) => {
-    const data = docSnap.data();
-    renderCategory(docSnap.id, data);
-  });
+    snapshot.forEach((docSnap) => {
+      const data = docSnap.data();
+      renderCategory(docSnap.id, data);
+    });
+  } catch (error) {
+    categoriesContainer.innerHTML = "";
+    statusMsg.classList.add("status-error");
+    statusMsg.textContent = "Couldn't load the menu. Refresh the page and try again.";
+    console.error("Error loading menu:", error);
+  }
 }
 
 function renderCategory(docId, data) {
@@ -105,7 +105,8 @@ function renderCategory(docId, data) {
   catEl.querySelector(".category-name-input").value = data.category;
 
   const dishList = catEl.querySelector(".dish-list");
-  data.items.forEach((item) => {
+  // A category saved without an items array still opens, so dishes can be added to it
+  (data.items || []).forEach((item) => {
     dishList.appendChild(renderDishRow(item));
   });
 
@@ -200,14 +201,27 @@ addCategoryBtn.addEventListener("click", async () => {
   const name = prompt("New category name:");
   if (!name || !name.trim()) return;
 
-  const docId = slugify(name);
-
-  // Determine next order value
-  const existingSnap = await getDocs(collection(db, "menu"));
-  const nextOrder = existingSnap.size;
-
   try {
-    await setDoc(doc(db, "menu", docId), {
+    const existingSnapshot = await getDocs(collection(db, "menu"));
+
+    // Refuse a name that already exists (trimmed, ignoring capitals)
+    const normalizedName = name.trim().toLowerCase();
+    const nameAlreadyExists = existingSnapshot.docs.some(
+      (existingDoc) =>
+        (existingDoc.data().category || "").trim().toLowerCase() === normalizedName
+    );
+    if (nameAlreadyExists) {
+      alert(`A category named "${name.trim()}" already exists. Choose a different name.`);
+      return;
+    }
+
+    // Determine next order value
+    const nextOrder = existingSnapshot.size;
+
+    // Auto-generated document ID: can never overwrite an existing category,
+    // and works for names in any alphabet (e.g. Georgian)
+    const newCategoryRef = doc(collection(db, "menu"));
+    await setDoc(newCategoryRef, {
       category: name.trim(),
       order: nextOrder,
       items: [],

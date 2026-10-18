@@ -91,6 +91,10 @@ body {
   margin-bottom: 12px;
 }
 
+.status-msg.status-error {
+  color: #b3261e;
+}
+
 /* ---------- CATEGORY CARD ---------- */
 
 .category-card {
