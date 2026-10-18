@@ -4,6 +4,19 @@
 import { db } from "./firebase-config.js";
 import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
+const MENU_ERROR_MESSAGE =
+  "The menu couldn't load right now. Please refresh the page or ask us in person.";
+
+// Replaces the accordion content with a single status message
+function showMenuMessage(message) {
+  const accordion = document.getElementById("menu-accordion");
+  const messageElement = document.createElement("p");
+  messageElement.className = "menu-status";
+  messageElement.setAttribute("role", "status");
+  messageElement.textContent = message;
+  accordion.replaceChildren(messageElement);
+}
+
 function escapeHtml(str) {
   const div = document.createElement("div");
   div.textContent = str || "";
@@ -24,14 +37,27 @@ async function loadMenu() {
     renderMenu(categories);
   } catch (error) {
     console.error("Error loading menu:", error);
+    showMenuMessage(MENU_ERROR_MESSAGE);
   }
 }
 
 function renderMenu(categories) {
   const accordion = document.getElementById("menu-accordion");
-  accordion.innerHTML = ""; // clear any static content
 
-  categories.forEach((category, index) => {
+  // Skip categories with no name or no dishes, so one bad document
+  // can't stop the rest of the menu from rendering
+  const validCategories = categories.filter(
+    (category) => category.category && (category.items || []).length > 0
+  );
+
+  if (validCategories.length === 0) {
+    showMenuMessage(MENU_ERROR_MESSAGE);
+    return;
+  }
+
+  accordion.innerHTML = ""; // clear the loading message
+
+  validCategories.forEach((category, index) => {
     const dishesHTML = category.items
       .map(
         (item) => `

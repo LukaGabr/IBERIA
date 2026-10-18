@@ -212,6 +212,20 @@ nav.main-nav a:hover::after{width:100%;}
   gap:10px;
 }
 
+/* Loading / error message shown in place of the accordion */
+.menu-status{
+  background:var(--white);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:32px 24px;
+  text-align:center;
+  font-family:var(--font-display);
+  font-style:italic;
+  font-size:16px;
+  line-height:1.5;
+  color:var(--wine);
+}
+
 .acc-item{
   background:var(--white);
   border:1px solid var(--line);
