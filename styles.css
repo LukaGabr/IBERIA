@@ -86,6 +86,7 @@ nav.main-nav{display:flex;align-items:center;gap:44px;}
 nav.main-nav a{
   font-size:13px;letter-spacing:0.08em;text-transform:uppercase;font-weight:500;
   color:var(--ink);
+  white-space:nowrap;
   position:relative;
   padding-bottom:4px;
 }
@@ -96,7 +97,7 @@ nav.main-nav a::after{
 nav.main-nav a:hover::after{width:100%;}
 
 .header-cta{display:flex;align-items:center;gap:22px;}
-.header-cta .btn{padding:11px 22px;font-size:12px;}
+.header-cta .btn{padding:11px 22px;font-size:12px;white-space:nowrap;}
 
 .menu-toggle{display:none;background:none;border:0;cursor:pointer;padding:6px;position:relative;z-index:200;}
 .menu-toggle span{display:block;width:24px;height:2px;background:var(--wine);margin:5px 0;transition:transform .3s ease, opacity .3s ease;}
@@ -505,9 +506,27 @@ nav.main-nav a:hover::after{width:100%;}
   width:16px;
   height:16px;
 }
-@media (max-width:760px){
+/* Compact header: subtitle hidden, tighter nav (full header needs 1462px+) */
+@media (max-width:1461px){
+  .brand-text small{display:none;}
+  nav.main-nav{gap:24px;}
+}
+/* Hamburger: below the width where the compact header fits with 60px to spare.
+   Must match HAMBURGER_MAX_WIDTH in header.js. */
+@media (max-width:1118px){
   nav.main-nav, .header-cta .btn{display:none;}
+  .brand-text small{display:inline;}
   .menu-toggle{display:block;}
+  nav.main-nav.open{
+    display:flex;flex-direction:column;
+    position:absolute;top:100%;right:0;width:70%;
+    max-height:calc(100vh - 100%);overflow-y:auto;
+    background:var(--cream);
+    padding:24px 40px 40px;gap:28px;z-index:99;
+    box-shadow:-10px 0 30px rgba(92,26,36,0.1);
+  }
+}
+@media (max-width:760px){
   .hero{padding:130px 0 60px;}
   .story{padding:70px 0;}
   .story-grid{grid-template-columns:1fr;gap:32px;}
