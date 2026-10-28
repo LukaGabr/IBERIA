@@ -93,47 +93,111 @@ function renderMenu(categories) {
   attachAccordionListeners();
 }
 
+// Scroll animation for the accordion: brings an opened header to 90px from the top
+const ACCORDION_SCROLL_OFFSET = 90;
+const ACCORDION_SCROLL_DURATION = 350; // matches the .acc-panel transition
+let scrollAnimationFrameId = null;
+
+function cancelScrollAnimation() {
+  if (scrollAnimationFrameId !== null) {
+    cancelAnimationFrame(scrollAnimationFrameId);
+    scrollAnimationFrameId = null;
+  }
+}
+
+// CSS "ease" timing curve, cubic-bezier(0.25, 0.1, 0.25, 1)
+function cssEase(progress) {
+  const bezierPoint = (curveParameter, firstControl, secondControl) =>
+    3 * (1 - curveParameter) ** 2 * curveParameter * firstControl +
+    3 * (1 - curveParameter) * curveParameter ** 2 * secondControl +
+    curveParameter ** 3;
+  // find the curve parameter whose x equals progress, then return its y
+  let lowerBound = 0;
+  let upperBound = 1;
+  let curveParameter = progress;
+  for (let iteration = 0; iteration < 20; iteration++) {
+    curveParameter = (lowerBound + upperBound) / 2;
+    if (bezierPoint(curveParameter, 0.25, 0.25) < progress) lowerBound = curveParameter;
+    else upperBound = curveParameter;
+  }
+  return bezierPoint(curveParameter, 0.1, 1);
+}
+
+// Animated by hand rather than behavior:"smooth", because the page is still
+// growing while the panel opens and a native smooth scroll can get clamped
+// to the old, shorter page height
+function animateScrollTo(targetScrollPosition) {
+  cancelScrollAnimation();
+  const startScrollPosition = window.scrollY;
+  const scrollDistance = targetScrollPosition - startScrollPosition;
+  const startTime = performance.now();
+
+  const animationStep = (currentTime) => {
+    const progress = Math.min(Math.max((currentTime - startTime) / ACCORDION_SCROLL_DURATION, 0), 1);
+    if (progress < 1) {
+      window.scrollTo(0, startScrollPosition + scrollDistance * cssEase(progress));
+      scrollAnimationFrameId = requestAnimationFrame(animationStep);
+    } else {
+      window.scrollTo(0, targetScrollPosition); // exact target on the final frame
+      scrollAnimationFrameId = null;
+    }
+  };
+  scrollAnimationFrameId = requestAnimationFrame(animationStep);
+}
+
+// Never fight the visitor: stop the animation as soon as they scroll themselves
+["wheel", "touchstart", "keydown"].forEach((eventName) => {
+  window.addEventListener(eventName, cancelScrollAnimation, { passive: true });
+});
+
 // Accordion menu — one category open at a time
 function attachAccordionListeners() {
   const accItems = document.querySelectorAll("#menu-accordion .acc-item");
-  const allPanels = document.querySelectorAll("#menu-accordion .acc-panel");
 
   accItems.forEach((item) => {
     const header = item.querySelector(".acc-header");
     header.addEventListener("click", () => {
-      const willOpen = !item.classList.contains("active");
-      const wasActive = Array.from(accItems).find((i) => i.classList.contains("active"));
+      cancelScrollAnimation(); // only one scroll animation at a time
 
-      // --- Step 1: figure out where the header will end up, with no
-      // animation and no visible change, by momentarily applying the final
-      // state, measuring it, then instantly reverting. ---
-      allPanels.forEach((p) => (p.style.transition = "none"));
+      // Clicking the open category just closes it with the normal animation
+      if (item.classList.contains("active")) {
+        item.classList.remove("active");
+        header.setAttribute("aria-expanded", "false");
+        return;
+      }
 
-      accItems.forEach((i) => i.classList.remove("active"));
-      if (willOpen) item.classList.add("active");
-      void document.body.offsetHeight; // force layout to read final positions
+      // Close the other open categories instantly (no animation), then scroll by
+      // however far that moved the clicked header, so it stays put on screen
+      // instead of bouncing while a tall panel above it collapses
+      const otherOpenItems = Array.from(accItems).filter(
+        (otherItem) => otherItem !== item && otherItem.classList.contains("active")
+      );
+      const otherOpenPanels = otherOpenItems.map((otherItem) => otherItem.querySelector(".acc-panel"));
+      const headerTopBefore = header.getBoundingClientRect().top;
 
-      const targetTop = header.getBoundingClientRect().top + window.pageYOffset - 90;
-
-      accItems.forEach((i) => i.classList.remove("active"));
-      if (wasActive) wasActive.classList.add("active");
-      void document.body.offsetHeight; // force layout back to the starting state
-
-      allPanels.forEach((p) => (p.style.transition = ""));
-
-      // --- Step 2: apply the real change and scroll to the pre-calculated
-      // target in one smooth motion, at the same time the panels animate. ---
-      requestAnimationFrame(() => {
-        accItems.forEach((other) => {
-          other.classList.remove("active");
-          other.querySelector(".acc-header").setAttribute("aria-expanded", "false");
-        });
-        if (willOpen) {
-          item.classList.add("active");
-          header.setAttribute("aria-expanded", "true");
-        }
-        window.scrollTo({ top: targetTop, behavior: "smooth" });
+      otherOpenPanels.forEach((panel) => panel.classList.add("no-transition"));
+      void document.body.offsetHeight; // force reflow so transition:none applies before the change
+      otherOpenItems.forEach((otherItem) => {
+        otherItem.classList.remove("active");
+        otherItem.querySelector(".acc-header").setAttribute("aria-expanded", "false");
       });
+
+      const headerTopAfter = header.getBoundingClientRect().top;
+      window.scrollBy(0, headerTopAfter - headerTopBefore);
+      requestAnimationFrame(() => {
+        otherOpenPanels.forEach((panel) => panel.classList.remove("no-transition"));
+      });
+
+      // Then open the clicked category with the normal 0.35s animation
+      item.classList.add("active");
+      header.setAttribute("aria-expanded", "true");
+
+      // and glide the header to 90px from the top while it opens. The header
+      // doesn't move as its own panel grows below it, so the target stays valid;
+      // near the bottom of the page the browser clamps it
+      const targetScrollPosition =
+        window.scrollY + header.getBoundingClientRect().top - ACCORDION_SCROLL_OFFSET;
+      animateScrollTo(targetScrollPosition);
     });
   });
 }

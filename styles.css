@@ -301,6 +301,10 @@ nav.main-nav a:hover::after{width:100%;}
 .acc-item.active .acc-panel{
   grid-template-rows:1fr;
 }
+/* Set briefly by menu.js to close a panel instantly */
+.acc-panel.no-transition{
+  transition:none;
+}
 .acc-panel-inner{
   overflow:hidden;
 }
