@@ -17,6 +17,13 @@ function showMenuMessage(message) {
   accordion.replaceChildren(messageElement);
 }
 
+// "$14" for whole dollars, "$12.50" with cents; "" (no price shown) for a
+// missing, invalid or zero price, so the page never shows "$NaN" or "$0"
+function formatPrice(price) {
+  if (!Number.isFinite(price) || price <= 0) return "";
+  return Number.isInteger(price) ? `$${price}` : `$${price.toFixed(2)}`;
+}
+
 function escapeHtml(str) {
   const div = document.createElement("div");
   div.textContent = str || "";
@@ -59,14 +66,18 @@ function renderMenu(categories) {
 
   validCategories.forEach((category, index) => {
     const dishesHTML = category.items
-      .map(
-        (item) => `
+      .map((item) => {
+        const priceText = formatPrice(item.price);
+        return `
       <div class="dish">
-        <h4>${escapeHtml(item.name)}</h4>
+        <div class="dish-head">
+          <h4>${escapeHtml(item.name)}</h4>
+          ${priceText ? `<span class="dish-price">${escapeHtml(priceText)}</span>` : ""}
+        </div>
         <p>${escapeHtml(item.description)}</p>
       </div>
-    `
-      )
+    `;
+      })
       .join("");
 
     const isFirst = index === 0; // keep first category open by default

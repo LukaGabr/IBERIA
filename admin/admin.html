@@ -39,6 +39,23 @@
   <div id="categories-container"></div>
 
   <button id="add-category-btn" class="btn-primary add-category-btn">+ Add New Category</button>
+
+  <!-- ===== IMPORT MENU FROM JSON ===== -->
+  <section class="import-section" aria-labelledby="import-heading">
+    <h2 id="import-heading">Import menu from JSON</h2>
+    <p class="import-warning">Importing <strong>replaces the whole menu</strong>: every current category is deleted and the file's categories are created. You'll download a backup of the current menu first.</p>
+    <label for="import-file-input" class="import-file-label">Choose a .json file</label>
+    <input type="file" id="import-file-input" accept=".json,application/json">
+    <div id="import-problems" class="import-problems"></div>
+    <div id="import-preview" class="import-preview"></div>
+    <div class="import-actions">
+      <button id="import-backup-btn" class="btn-secondary" disabled>Download backup</button>
+      <span id="import-backup-name" class="import-backup-name"></span>
+      <button id="import-confirm-btn" class="btn-danger" disabled>Replace menu</button>
+      <button id="import-cancel-btn" class="btn-secondary" disabled>Cancel</button>
+    </div>
+    <div id="import-status" class="status-msg"></div>
+  </section>
 </section>
 
 <script type="module" src="admin.js"></script>

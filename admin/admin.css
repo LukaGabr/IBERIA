@@ -132,7 +132,7 @@ body {
 
 .dish-row {
   display: grid;
-  grid-template-columns: 200px 1fr auto;
+  grid-template-columns: 1fr 1fr 110px auto;
   gap: 10px;
   align-items: start;
   padding: 10px;
@@ -141,11 +141,37 @@ body {
   border: 1px solid #ece6da;
 }
 
-.dish-name-input {
+/* description and error message span the input columns, under name/price */
+.dish-row .dish-desc-input,
+.dish-row .dish-error {
+  grid-column: 1 / 4;
+}
+
+.dish-name-input,
+.dish-name-georgian-input,
+.dish-price-input,
+.category-name-georgian-input {
   padding: 8px 10px;
   border: 1px solid #d8d2c8;
   border-radius: 6px;
   font-size: 0.95rem;
+}
+
+.category-name-georgian-input {
+  flex: 1;
+}
+
+.dish-price-input.invalid {
+  border-color: #b3261e;
+}
+
+.dish-error {
+  color: #b3261e;
+  font-size: 0.85rem;
+}
+
+.dish-error:empty {
+  display: none;
 }
 
 .dish-desc-input {
@@ -161,6 +187,13 @@ body {
 @media (max-width: 640px) {
   .dish-row {
     grid-template-columns: 1fr;
+  }
+  .dish-row .dish-desc-input,
+  .dish-row .dish-error {
+    grid-column: auto;
+  }
+  .category-header {
+    flex-wrap: wrap;
   }
 }
 
@@ -212,6 +245,76 @@ body {
   margin-left: 10px;
   font-size: 0.85rem;
   color: #2e7d32;
+}
+
+/* ---------- IMPORT ---------- */
+
+.import-section {
+  background: #ffffff;
+  border: 1px solid #e5ded2;
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 40px;
+}
+
+.import-section h2 {
+  margin: 0 0 8px;
+  font-size: 1.2rem;
+}
+
+.import-warning {
+  margin: 0 0 16px;
+  font-size: 0.9rem;
+  color: #7a7168;
+}
+
+.import-file-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.import-problems {
+  color: #b3261e;
+  font-size: 0.9rem;
+}
+
+.import-problems ul,
+.import-preview ul {
+  margin: 8px 0;
+  padding-left: 20px;
+}
+
+.import-preview {
+  font-size: 0.9rem;
+}
+
+.import-preview .removed-list {
+  color: #b3261e;
+}
+
+.import-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 16px 0 12px;
+}
+
+.import-backup-name {
+  font-size: 0.85rem;
+  color: #2e7d32;
+  word-break: break-all;
+}
+
+.import-backup-name:empty {
+  display: none;
+}
+
+.import-actions button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 #login-form .btn-primary {
