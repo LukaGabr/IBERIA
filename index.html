@@ -14,14 +14,14 @@
 <link rel="apple-touch-icon" href="favicon/apple-touch-icon.png">
 <link rel="manifest" href="favicon/site.webmanifest">
 </head>
-<body>
+<body class="delivery-coming-soon">
 
 <!-- ===== HEADER ===== -->
 <header id="site-header">
   <div class="utility-bar">
     <div class="wrap">
-      <span>22-28 W Pond Rd, Perth Amboy, NJ 08861</span>
-      <span>Open Daily</span>
+      <span>22-28 W Pond Rd, Perth Amboy<span class="utility-address-extra">, NJ 08861</span></span>
+      <span>Open daily from 8 AM</span>
     </div>
   </div>
   <div class="main-header">
@@ -30,15 +30,20 @@
         <img src="Images/Iberia(Logos)/IBERIA(LOGO)Black.png" alt="IBERIA Georgian Restaurant & Bakery" width="192" height="192">
         <span class="brand-text">IBERIA <small>Georgian Restaurant &amp; Bakery</small></span>
       </a>
+      <!-- "Soon" pills on the Order Online nav link and header button (also shown in the
+           hamburger panel). They only show while <body> has the "delivery-coming-soon" class.
+           Launch steps when all three delivery apps are live:
+           1. Remove the "delivery-coming-soon" class from <body> (hides both pills).
+           2. Optionally delete the two <span class="soon-tag"> elements and the .soon-tag CSS. -->
       <nav class="main-nav" id="main-nav">
         <a href="#home">Home</a>
         <a href="#story">Our Story</a>
         <a href="#menu">Menu</a>
         <a href="#visit">Visit</a>
-        <a href="#order">Order Online</a>
+        <a href="#order">Order Online<span class="soon-tag"><span class="visually-hidden">, coming </span>Soon</span></a>
       </nav>
       <div class="header-cta">
-        <a href="#order" class="btn btn-outline-wine">Order Online</a>
+        <a href="#order" class="btn btn-outline-wine">Order Online<span class="soon-tag"><span class="visually-hidden">, coming </span>Soon</span></a>
         <a href="#visit" class="btn btn-gold">Reserve a Table</a>
       </div>
       <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="main-nav">
@@ -120,7 +125,10 @@
     <div class="visit-info">
       <p>22-28 W Pond Rd, Perth Amboy, NJ 08861</p>
       <p>(848) 334-0262 &middot; iberiageorgian@gmail.com</p>
-      <p>Open Daily</p>
+      <div class="visit-hours">
+        <p>Sunday–Friday · 8&nbsp;AM–10&nbsp;PM</p>
+        <p>Saturday · 8&nbsp;AM–11&nbsp;PM</p>
+      </div>
     </div>
 
     <p class="visit-note">Reservations can be made by phone or email — we'll confirm as soon as we can.</p>
@@ -146,20 +154,25 @@
   <div class="wrap order-content">
     <p class="eyebrow">Order Online</p>
     <h2>Bring IBERIA home.</h2>
-    <p class="order-intro">Prefer delivery or pickup? Order directly through any of our partners below.</p>
+    <p class="order-intro">Delivery through DoorDash, Uber Eats and Grubhub is coming soon. Until then, call us to order for pickup:</p>
+    <p class="order-phone"><a href="tel:+18483340262">(848) 334-0262</a></p>
 
     <div class="order-badges">
-      <!-- Href got to be replaced with real DoorDash store link -->
-      <a href="#" class="order-badge" target="_blank" rel="noopener">
-        <img src="Images/Deliviry Services Logos/doordash-logo.jpeg" alt="Order on DoorDash" width="141" height="96" loading="lazy" decoding="async">
+      <!-- Delivery badges. A badge with no href shows as "Coming soon" (dimmed grey logo +
+           caption) and is not a link, so it can't be clicked or tabbed to.
+           Launch steps, per app: add href="URL" target="_blank" rel="noopener" to its badge and
+           restore its alt to "Order on <service>" — that badge then looks and works normally.
+           When all three are live: remove the "delivery-coming-soon" class from <body>, update
+           the .order-intro text, and delete the .order-phone paragraph if phone ordering
+           should no longer be featured. -->
+      <a class="order-badge">
+        <img src="Images/Deliviry Services Logos/doordash-logo.jpeg" alt="DoorDash" width="141" height="96" loading="lazy" decoding="async">
       </a>
-      <!-- Href got to be replaced with real Uber Eats store link -->
-      <a href="#" class="order-badge" target="_blank" rel="noopener">
-        <img src="Images/Deliviry Services Logos/ubereats-logo.svg" alt="Order on Uber Eats" width="679" height="579" loading="lazy" decoding="async">
+      <a class="order-badge">
+        <img src="Images/Deliviry Services Logos/ubereats-logo.svg" alt="Uber Eats" width="679" height="579" loading="lazy" decoding="async">
       </a>
-      <!-- Href got to be replaced with real Grubhub store link -->
-      <a href="#" class="order-badge" target="_blank" rel="noopener">
-        <img src="Images/Deliviry Services Logos/grubhub-logo.png" alt="Order on Grubhub" width="460" height="96" loading="lazy" decoding="async">
+      <a class="order-badge">
+        <img src="Images/Deliviry Services Logos/grubhub-logo.png" alt="Grubhub" width="460" height="96" loading="lazy" decoding="async">
       </a>
     </div>
   </div>
@@ -197,6 +210,7 @@
 
     <div class="footer-contact">
       22-28 W Pond Rd, Perth Amboy, NJ 08861 &middot; iberiageorgian@gmail.com
+      <p class="footer-hours">Open daily 8&nbsp;AM–10&nbsp;PM &middot; Saturday until 11&nbsp;PM</p>
     </div>
 
     <div class="footer-bottom">
