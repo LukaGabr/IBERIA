@@ -233,7 +233,7 @@ body.delivery-coming-soon .soon-tag{display:block;}
   background:var(--cream);
   border:1px solid var(--line);
   border-radius:4px;
-  height:280px;
+  aspect-ratio:664 / 415;
   overflow:hidden;
 }
 .story-visual img{
@@ -687,7 +687,7 @@ body.delivery-coming-soon .soon-tag{display:block;}
   .hero{padding:130px 0 60px;}
   .story{padding:70px 0;}
   .story-grid{grid-template-columns:1fr;gap:32px;}
-  .story-visual{height:200px;order:-1;}
+  .story-visual{order:-1;}
   .menu{padding:70px 0;}
   .menu-head{margin-bottom:32px;}
   .acc-header{padding:15px 18px;font-size:14.5px;}
